@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+  nextjs-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8090:3000"
+    environment:
+      - NEXT_PUBLIC_API_BASE_URL=http://43.231.127.113:8050
+    restart: unless-stopped
+    networks:
+      - bmaps_network
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 500M
+
+networks:
+  bmaps_network:
+    external: true

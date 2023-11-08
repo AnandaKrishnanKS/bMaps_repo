@@ -1,0 +1,28 @@
+name: Docker Deployment
+
+on:
+  push:
+    branches:
+      - alpha
+
+jobs:
+  recreate-docker-container:
+    name: Deploy 
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: SSH to instance
+        env:
+            PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+            HOSTNAME: ${{secrets.SSH_HOST}}
+            USER_NAME: ${{secrets.USER_NAME}}
+        run: |
+          echo "$PRIVATE_KEY" > private_key
+          chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+              /home/ubuntu/deploy/asif_bmaps_web_deploy.sh 
+              '
+          
+      - name: clean ssh key
+        if: always()
+        run: rm -rf private_key
